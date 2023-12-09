@@ -24,13 +24,30 @@ export const contactsSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(addContact.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.contacts = [...state.contacts, action.payload];
       })
+      .addCase(addContact.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(addContact.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteContact.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(deleteContact.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
       .addCase(deleteContact.fulfilled, (state, action) => {
-        state.contacts = state.contacts.filter((contact) => contact.id !== action.payload);
+        state.isLoading = false;
+        state.contacts = state.contacts.filter(
+          contact => contact.id !== action.payload
+        );
       });
   },
 });
-
 
 export const contactsReducer = contactsSlice.reducer;

@@ -1,21 +1,20 @@
 import { nanoid } from '@reduxjs/toolkit';
-import { ContactList } from 'components/ContactsList';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFilter } from '../../redux/actions';
-import { fetchContacts } from 'fetch/fetch';
-
+import { selectContacts, selectContactsisLoading } from '../../redux/selectors';
+import { setFilter } from '../../redux/filterSlice';
+import { fetchContacts } from '../../redux/operations';
+import { ContactList } from 'components/ContactList';
 
 export const Filter = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
+  const contacts = useSelector(selectContacts);
   const [searchContact, setsearchContact] = useState('');
-
+  const isLoading = useSelector(selectContactsisLoading);
 
   useEffect(() => {
     dispatch(fetchContacts());
-    
-  })
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(setFilter(searchContact));
@@ -43,7 +42,9 @@ export const Filter = () => {
         value={searchContact}
       ></input>
 
-      {findContact().length ? (
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : findContact().length ? (
         <ContactList list={findContact()}></ContactList>
       ) : (
         <p>No contacts to show.</p>
